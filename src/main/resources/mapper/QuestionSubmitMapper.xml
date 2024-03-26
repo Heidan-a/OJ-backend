@@ -11,7 +11,7 @@
             <result property="language" column="language" jdbcType="VARCHAR"/>
             <result property="code" column="code" jdbcType="VARCHAR"/>
             <result property="judgeInfo" column="judgeInfo" jdbcType="VARCHAR"/>
-            <result property="states" column="states" jdbcType="INTEGER"/>
+            <result property="status" column="states" jdbcType="INTEGER"/>
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>

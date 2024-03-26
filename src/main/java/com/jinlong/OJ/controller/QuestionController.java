@@ -1,5 +1,6 @@
 package com.jinlong.OJ.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import com.jinlong.OJ.annotation.AuthCheck;
@@ -10,10 +11,8 @@ import com.jinlong.OJ.common.ResultUtils;
 import com.jinlong.OJ.constant.UserConstant;
 import com.jinlong.OJ.exception.BusinessException;
 import com.jinlong.OJ.exception.ThrowUtils;
-import com.jinlong.OJ.model.dto.question.QuestionAddRequest;
-import com.jinlong.OJ.model.dto.question.QuestionEditRequest;
-import com.jinlong.OJ.model.dto.question.QuestionQueryRequest;
-import com.jinlong.OJ.model.dto.question.QuestionUpdateRequest;
+import com.jinlong.OJ.model.dto.question.*;
+import com.jinlong.OJ.model.dto.user.UserQueryRequest;
 import com.jinlong.OJ.model.entity.Question;
 import com.jinlong.OJ.model.entity.User;
 import com.jinlong.OJ.model.vo.QuestionVO;
@@ -62,6 +61,14 @@ public class QuestionController {
         List<String> tags = questionAddRequest.getTags();
         if (tags != null) {
             question.setTags(GSON.toJson(tags));
+        }
+        List<JudgeCase> judgeCases = questionAddRequest.getJudgeCase();
+        if(judgeCases != null){
+            question.setJudgeCase(GSON.toJson(judgeCases));
+        }
+        JudgeConfig judgeConfig = questionAddRequest.getJudgeConfig();
+        if(judgeConfig != null){
+            question.setJudgeConfig(GSON.toJson(judgeConfig));
         }
         questionService.validQuestion(question, true);
         User loginUser = userService.getLoginUser(request);
@@ -117,6 +124,14 @@ public class QuestionController {
         if (tags != null) {
             question.setTags(GSON.toJson(tags));
         }
+        List<JudgeCase> judgeCases = questionUpdateRequest.getJudgeCase();
+        if(judgeCases != null){
+            question.setJudgeCase(GSON.toJson(judgeCases));
+        }
+        JudgeConfig judgeConfig = questionUpdateRequest.getJudgeConfig();
+        if(judgeConfig != null){
+            question.setJudgeConfig(GSON.toJson(judgeConfig));
+        }
         // 参数校验
         questionService.validQuestion(question, false);
         long id = questionUpdateRequest.getId();
@@ -164,6 +179,26 @@ public class QuestionController {
         return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
     }
 
+
+    /**
+     * 分页获取题目列表（仅管理员）
+     *
+     * @param questionQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/list/page")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Page<Question>> listQuestionByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
+                                                   HttpServletRequest request) {
+        long current = questionQueryRequest.getCurrent();
+        long size = questionQueryRequest.getPageSize();
+        Page<Question> questionPage = questionService.page(new Page<>(current, size),
+                questionService.getQueryWrapper(questionQueryRequest));
+        return ResultUtils.success(questionPage);
+    }
+
+
     /**
      * 分页获取当前用户创建的资源列表
      *
@@ -208,6 +243,14 @@ public class QuestionController {
         if (tags != null) {
             question.setTags(GSON.toJson(tags));
         }
+        List<JudgeCase> judgeCases = questionEditRequest.getJudgeCase();
+        if(judgeCases != null){
+            question.setJudgeCase(GSON.toJson(judgeCases));
+        }
+        JudgeConfig judgeConfig = questionEditRequest.getJudgeConfig();
+        if(judgeConfig != null){
+            question.setJudgeConfig(GSON.toJson(judgeConfig));
+        }
         // 参数校验
         questionService.validQuestion(question, false);
         User loginUser = userService.getLoginUser(request);
@@ -222,5 +265,7 @@ public class QuestionController {
         boolean result = questionService.updateById(question);
         return ResultUtils.success(result);
     }
+
+
 
 }

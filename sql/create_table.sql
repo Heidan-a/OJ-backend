@@ -53,9 +53,10 @@ create table if not exists question_submit
     language    varchar(128)                       not null comment '编程语言',
     code        text                               not null comment '用户代码',
     judgeInfo   text                               null comment '判题状态(0 等待，1 判题中，2 成功 ，3失败 )',
-    states      int default 0                      not null comment '判题配置（json 对象）',
+    status      int default 0                      not null comment '判题配置（json 对象）',
     createTime  datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime  datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete   tinyint  default 0                 not null comment '是否删除',
     index idx_userId (userId),
     index idx_questionId (questionId)
     ) comment '题目提交';
