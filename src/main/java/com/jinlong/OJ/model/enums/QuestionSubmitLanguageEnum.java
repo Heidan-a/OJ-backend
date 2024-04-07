@@ -11,9 +11,10 @@ import java.util.stream.Collectors;
  */
 public enum QuestionSubmitLanguageEnum {
 
-    ACCEPTED("java", "java"),
-    WRONG_ANSWER("c++", "c++"),
-    COMPILE_ERROR("goland", "goland");
+    JAVA("java", "java"),
+    CPLUSPLUS("cpp", "cpp"),
+    GOLAND("go", "go"),
+    PYTHON("python", "python");
 
     private final String text;
 

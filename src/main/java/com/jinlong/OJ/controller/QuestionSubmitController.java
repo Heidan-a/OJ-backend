@@ -60,7 +60,7 @@ public class QuestionSubmitController {
 
 
     /**
-     * 分页获取题目提交列表（仅管理员）
+     * 分页获取题目提交列表（仅管理员能查看全部，用户自己能查看自己的代码和答案）
      *
      * @param questionSubmitQueryRequest
      * @param request

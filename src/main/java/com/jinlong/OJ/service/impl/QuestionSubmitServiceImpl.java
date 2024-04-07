@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,14 +65,6 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
         long questionId = questionSubmitAddRequest.getQuestionId();
         Question question = questionService.getById(questionId);
-        System.out.println(questionId);
-        System.out.println(questionId);
-        System.out.println(questionId);
-        System.out.println(questionId);
-        System.out.println(questionId);
-        System.out.println(questionId);
-        System.out.println(questionId);
-        System.out.println(questionId);
 
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
@@ -86,6 +79,8 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         questionSubmit.setLanguage(language);
         questionSubmit.setStatus(QuestionSubmitStatusEnum.WAITING.getValue());
         questionSubmit.setJudgeInfo("{}");
+        questionSubmit.setCreateTime(new Date());
+        questionSubmit.setUpdateTime(new Date());
         boolean save = this.save(questionSubmit);
         if (!save) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据插入失败");

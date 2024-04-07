@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class NetUtils {
 
-    /**
+    /**   
      * 获取客户端 IP 地址
      *
      * @param request
@@ -48,5 +48,6 @@ public class NetUtils {
         }
         return ip;
     }
+
 
 }
