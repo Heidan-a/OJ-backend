@@ -60,7 +60,7 @@ public enum JudgeInfoMessageEnum {
         return null;
     }
 
-    public String getValue() {
+    public  String getValue() {
         return value;
     }
 

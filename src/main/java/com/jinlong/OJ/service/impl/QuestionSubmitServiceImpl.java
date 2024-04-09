@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jinlong.OJ.common.ErrorCode;
 import com.jinlong.OJ.constant.CommonConstant;
 import com.jinlong.OJ.exception.BusinessException;
+import com.jinlong.OJ.judge.JudgeService;
 import com.jinlong.OJ.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.jinlong.OJ.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.jinlong.OJ.model.entity.Question;
@@ -23,6 +24,7 @@ import com.jinlong.OJ.utils.SqlUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,21 +33,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
-* @author yang2
-* @description 针对表【question_submit(题目提交)】的数据库操作Service实现
-* @createDate 2023-11-17 21:17:23
-*/
+ * @author yang2
+ * @description 针对表【question_submit(题目提交)】的数据库操作Service实现
+ * @createDate 2023-11-17 21:17:23
+ */
 @Service
 public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
-    implements QuestionSubmitService{
+        implements QuestionSubmitService {
     @Resource
     QuestionService questionService;
 
     @Resource
     UserService userService;
+
+    @Resource
+    @Lazy
+    JudgeService judgeService;
+
     /**
      * 提交问题
      *
@@ -85,8 +93,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         if (!save) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据插入失败");
         }
-        return questionSubmit.getId();
-}
+        Long questionSubmitId = questionSubmit.getId();
+        CompletableFuture.runAsync(() -> {
+            judgeService.doJudge(questionSubmitId);
+        });
+        return questionSubmitId;
+    }
 
     @Override
     public QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest) {
@@ -116,8 +128,8 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         QuestionSubmitVO questionSubmitVO = QuestionSubmitVO.objToVo(questionSubmit);
         //解耦 仅本人和管理员能看见自己的代码
         long userId = loginUser.getId();
-        if(userId != questionSubmit.getUserId() && !userService.isAdmin(loginUser)){
-        questionSubmitVO.setCode(null);
+        if (userId != questionSubmit.getUserId() && !userService.isAdmin(loginUser)) {
+            questionSubmitVO.setCode(null);
         }
         return questionSubmitVO;
     }
